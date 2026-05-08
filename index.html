@@ -155,16 +155,16 @@ body {
 .p1-content { flex: 1; overflow-y: auto; padding-top: 30px; }
 
 .profile-card {
-  margin: 10px 0 20px;
+  margin: -10px 0 20px;
   background: linear-gradient(135deg, #e0f7ff 0%, #fff 100%);
-  border-radius: 25px; padding: 30px 15px 25px; text-align: center;
+  border-radius: 25px; padding: 40px 20px 35px; text-align: center;
 }
-.profile-card .avatar { width: 100px; height: 100px; border-radius: 50%; background: #fff; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 20px rgba(100,200,255,0.2); }
-.profile-card .avatar img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
-.profile-card .nickname { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 5px; letter-spacing: 2px; }
-.profile-card .id { font-size: 13px; color: #bbb; margin-bottom: 10px; }
-.profile-card .bio { font-size: 14px; color: #888; margin-bottom: 10px; }
-.profile-card .location { font-size: 12px; color: #aaa; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.profile-card .avatar { width: 120px; height: 120px; border-radius: 50%; background: #fff; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 20px rgba(100,200,255,0.2); }
+.profile-card .avatar img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+.profile-card .nickname { font-size: 26px; font-weight: 700; color: #333; margin-bottom: 8px; letter-spacing: 2px; }
+.profile-card .id { font-size: 14px; color: #bbb; margin-bottom: 12px; }
+.profile-card .bio { font-size: 15px; color: #888; margin-bottom: 12px; }
+.profile-card .location { font-size: 13px; color: #aaa; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
 .widget-area { display: flex; gap: 15px; margin-bottom: 20px; }
 .love-widget { flex: 1; background: #fff; border-radius: 20px; padding: 20px 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.05); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -175,7 +175,7 @@ body {
 .love-widget .love-text { font-size: 13px; color: #555; margin-bottom: 5px; }
 .love-widget .date { font-size: 14px; color: #ff6b9d; font-weight: 600; }
 
-.app-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.app-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .app-grid .app-icon { background: transparent; border-radius: 20px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: none; cursor: pointer; }
 .app-grid .app-icon:active { transform: scale(0.95); }
 .app-grid .app-icon .icon { width: 65px; height: 65px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 32px; }
@@ -188,25 +188,25 @@ body {
 .dock-bar { 
   position: fixed;
   bottom: 15px;
-  left: 10px;
-  right: 10px;
-  width: calc(100% - 20px);
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px);
   display: flex; 
-  justify-content: space-around; 
+  justify-content: center; 
   align-items: center;
   background: rgba(255,255,255,0.9); 
   backdrop-filter: blur(10px); 
-  border-radius: 60px;
-  padding: 20px 25px; 
+  border-radius: 50px;
+  padding: 18px 30px; 
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  padding-bottom: calc(20px + max(0px, env(safe-area-inset-bottom)));
+  padding-bottom: calc(18px + max(0px, env(safe-area-inset-bottom)));
   z-index: 999;
   box-sizing: border-box;
-  gap: 10px;
+  gap: 15px;
 }
 .dock-bar .dock-icon { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
 .dock-bar .dock-icon:active { transform: scale(0.95); }
-.dock-bar .dock-icon .icon { width: 65px; height: 65px; border-radius: 14px; background: #fff; display: flex; justify-content: center; align-items: center; font-size: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.dock-bar .dock-icon .icon { width: 60px; height: 60px; border-radius: 12px; background: transparent; display: flex; justify-content: center; align-items: center; font-size: 32px; box-shadow: none; }
 .dock-bar .dock-icon span { font-size: 12px; color: #666; font-weight: 600; display: block; }
 
 /* ===== 第2页 ===== */
@@ -283,6 +283,53 @@ body {
 </style>
 </head>
 <body>
+<!-- API设置面板 默认隐藏 -->
+<div id="apiSettingPanel" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#f5f6fa;
+    z-index:9999;
+    padding:20px;
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+">
+
+    <h3 style="text-align:center;margin-bottom:20px;">API 设置</h3>
+
+    <div style="margin-bottom:15px;">
+        <input type="text" id="apiUrl" placeholder="API地址" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
+    </div>
+    <div style="margin-bottom:15px;">
+        <input type="text" id="apiKey" placeholder="API密钥" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
+    </div>
+    <div style="margin-bottom:15px;">
+        <input type="text" id="apiModel" placeholder="模型名称" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
+    </div>
+
+    <div style="margin:20px 0;">
+        <div style="display:flex;justify-content:space-between;">
+            <span>温度</span>
+            <span id="tempVal">0.7</span>
+        </div>
+        <input type="range" id="tempSlider" min="0" max="2" step="0.1" value="0.7"
+        style="width:100%;margin-top:8px;"
+        oninput="document.getElementById('tempVal').innerText=this.value">
+    </div>
+
+    <div style="display:flex;gap:10px;">
+        <button style="flex:1;padding:12px;border-radius:12px;border:none;background:#eee;" onclick="testApiLink()">链接测试</button>
+        <button style="flex:1;padding:12px;border-radius:12px;border:none;background:#eee;" onclick="saveApiConfig()">保存设置</button>
+    </div>
+
+    <button style="width:100%;margin-top:15px;padding:12px;border-radius:12px;border:none;background:#ddd;"
+    onclick="document.getElementById('apiSettingPanel').style.display='none'">
+        关闭
+    </button>
+</div>
+
 <div class="desktop-bg">
   <div class="iphone-frame">
     <div class="dynamic-island"></div>
@@ -314,28 +361,26 @@ body {
                   <div style="width: 6px; height: 16px; background: #c8d8e8; border-radius: 3px; opacity: 0.7;"></div>
                   <div style="width: 6px; height: 16px; background: #c8d8e8; border-radius: 3px; opacity: 0.7;"></div>
                 </div>
-                <div style="font-size: 14px; font-weight: 500; color: #444; letter-spacing: 0.3px; flex: 1; text-align: center; margin-left: -15px;">@yuyuyouoi</div>
-                <div style="font-size: 12px; font-weight: 400; color: #555; letter-spacing: 0.3px;">Nov 30</div>
               </div>
               
               <!-- 中间内容 -->
               <div style="display: flex; gap: 10px; align-items: flex-start;">
                 <!-- 左侧头像 -->
-                <div style="position: relative; flex-shrink: 0;">
+                <div style="position: relative; flex-shrink: 0; cursor: pointer;" class="avatar-upload" data-type="bear">
                   <div style="width: 70px; height: 70px; position: relative;">
                     <div style="position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; background: linear-gradient(135deg, #d0e0f0 0%, #c8d8e8 50%, #d0e0f0 100%); border-radius: 16px; opacity: 0.4;"></div>
                     <div style="position: absolute; width: 100%; height: 100%; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg, #e8f0f8 0%, #d8e4f0 100%); display: flex; align-items: center; justify-content: center; z-index: 2;">
-                      <div style="font-size: 40px;">🐻</div>
+                      <div style="font-size: 40px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;" class="bear-emoji"></div>
                     </div>
                   </div>
                 </div>
                 
                 <!-- 右侧文字 -->
                 <div style="flex: 1; padding-top: 2px;">
-                  <div style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 1px;">I'm #自嘲熊nagano !</div>
-                  <div style="font-size: 10px; color: #888; line-height: 1.6; margin-bottom: 1px;">私はナガノのくまです。</div>
-                  <div style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 1px;">泥嚎~？在吗？我是自嘲熊。</div>
-                  <div style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 6px;">被屏蔽了？</div>
+                  <input type="text" value="I'm #自嘲熊nagano !" style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 1px; border: none; background: transparent; width: 100%; padding: 2px 4px; font-family: inherit; outline: none;" class="editable-input">
+                  <input type="text" value="私はナガノのくまです。" style="font-size: 10px; color: #888; line-height: 1.6; margin-bottom: 1px; border: none; background: transparent; width: 100%; padding: 2px 4px; font-family: inherit; outline: none;" class="editable-input">
+                  <input type="text" value="泥嚎~？在吗？我是自嘲熊。" style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 1px; border: none; background: transparent; width: 100%; padding: 2px 4px; font-family: inherit; outline: none;" class="editable-input">
+                  <input type="text" value="被屏蔽了？" style="font-size: 11px; color: #888; line-height: 1.6; margin-bottom: 6px; border: none; background: transparent; width: 100%; padding: 2px 4px; font-family: inherit; outline: none;" class="editable-input">
                   
                   <!-- 图标栏 -->
                   <div style="display: flex; gap: 12px; padding-left: 2px;">
@@ -352,8 +397,8 @@ body {
               
               <!-- 底部区域 -->
               <div style="display: flex; align-items: center; gap: 6px; position: relative;">
-                <div style="font-size: 12px; color: #888; white-space: nowrap; flex-shrink: 0;">(〃'▽'〃)</div>
-                <div style="background: white; border: 1px solid #e0e0e0; border-radius: 16px; padding: 5px 12px; font-size: 11px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.04); flex: 1;">熊熊我... 向來都是天賦一餅的嘛</div>
+                <div style="font-size: 12px; color: #888; white-space: nowrap; flex-shrink: 0; cursor: pointer; padding: 2px 4px; border-radius: 4px;" contenteditable="true" class="editable-line">(〃'▽'〃)</div>
+                <div style="background: white; border: 1px solid #e0e0e0; border-radius: 16px; padding: 5px 12px; font-size: 11px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.04); flex: 1; cursor: pointer;" contenteditable="true" class="editable-line">淡淡的就会顺顺的</div>
                 
                 <!-- 右下角圆形照片 -->
                 <div style="position: absolute; right: -6px; bottom: -6px; width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #e0e8f0 0%, #d0d8e0 100%); box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 10;">
@@ -385,7 +430,15 @@ body {
                <div class="dock-icon"><div class="icon">🎨</div><span>外观</span></div>
                <div class="dock-icon"><div class="icon">👫</div><span>情侣空间</span></div>
                <div class="dock-icon"><div class="icon">💬</div><span>论坛</span></div>
-               <div class="dock-icon"><div class="icon">⚙️</div><span>设置</span></div>
+               <div id="setBtn" style="
+    position: relative;
+    z-index: 99999;
+    text-align: center;
+    cursor: pointer;
+">
+    <div style="font-size:26px;">⚙️</div>
+    <div style="font-size:12px;color:#666;margin-top:4px;">设置</div>
+</div>
             </div>
           </div>
         </div>
@@ -396,7 +449,7 @@ body {
           <div class="p2-wrap" style="display: flex; flex-direction: column;">
             <div class="p2-content" style="flex: 1; overflow-y: auto; padding-top: 30px;">
             <!-- 粉色卡通消息区 -->
-            <div style="background: linear-gradient(to bottom, #fff0f5, #ffe6ef); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(255, 182, 193, 0.3);">
+            <div style="background: linear-gradient(to bottom, #fff0f5, #ffe6ef); border-radius: 20px; padding: 15px; margin-bottom: 15px; margin-top: -10px; box-shadow: 0 8px 25px rgba(255, 182, 193, 0.3);">
               <!-- 顶部装饰 -->
               <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 8px;">
                 <div style="width: 10px; height: 10px; background: #ffd6e0; border-radius: 50%; opacity: 0.7;"></div>
@@ -455,8 +508,8 @@ body {
         <div class="scroll-page" id="page2">
           <div class="dot-bg"></div>
           <div class="p3-wrap" style="display: flex; flex-direction: column;">
-            <div style="padding-top: 30px;"></div>
-            <div class="calendar-card" style="margin-bottom: 12px; padding: 12px;">
+            <div style="padding-top: 20px;"></div>
+            <div class="calendar-card" style="margin-bottom: 12px; margin-top: -10px; padding: 12px;">
               <div class="calendar-header" style="margin-bottom: 10px;"><div class="month" style="font-size: 20px;">5月</div><div class="year" style="font-size: 14px;">2026年</div></div>
               <div class="calendar-days-header" style="font-size: 12px; margin-bottom: 6px;"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
               <div class="calendar-days" style="gap: 4px;">
@@ -732,17 +785,249 @@ function updateSafeArea() {
 updateSafeArea();
 window.addEventListener('resize', updateSafeArea);
 
-// 禁用长按菜单
+// 禁用长按菜单（但允许编辑区域）
 document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-  return false;
+  if (!e.target.contentEditable || e.target.contentEditable === 'false') {
+    e.preventDefault();
+    return false;
+  }
 }, false);
 
-// 禁用选择
+// 禁用选择（但允许编辑区域）
 document.addEventListener('selectstart', function(e) {
-  e.preventDefault();
-  return false;
+  if (!e.target.contentEditable || e.target.contentEditable === 'false') {
+    e.preventDefault();
+    return false;
+  }
 }, false);
+
+// ===== 编辑功能 =====
+// 为蓝色资料卡的文字添加编辑功能
+document.querySelectorAll('.editable-text').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var field = this.getAttribute('data-field');
+    var currentText = this.textContent;
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentText;
+    input.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;max-width:300px;padding:12px;font-size:16px;border:2px solid #667eea;border-radius:8px;z-index:10000;background:#fff;box-shadow:0 5px 20px rgba(0,0,0,0.2)';
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+    
+    function saveEdit() {
+      el.textContent = input.value || currentText;
+      document.body.removeChild(input);
+    }
+    
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') saveEdit();
+      if (e.key === 'Escape') document.body.removeChild(input);
+    });
+  });
+});
+
+// 为头像和相机添加图片上传功能
+document.querySelectorAll('.avatar-upload').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function(e) {
+      var file = e.target.files[0];
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          var type = el.getAttribute('data-type');
+          if (type === 'bear') {
+            var emojiEl = el.querySelector('.bear-emoji');
+            if (emojiEl) {
+              var img = document.createElement('img');
+              img.src = event.target.result;
+              img.style.width = '100%';
+              img.style.height = '100%';
+              img.style.objectFit = 'cover';
+              img.style.borderRadius = '12px';
+              img.style.display = 'block';
+              emojiEl.style.width = '100%';
+              emojiEl.style.height = '100%';
+              emojiEl.style.display = 'flex';
+              emojiEl.style.alignItems = 'center';
+              emojiEl.style.justifyContent = 'center';
+              emojiEl.innerHTML = '';
+              emojiEl.appendChild(img);
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  });
+});
+
+// 为相机圆圈添加点击事件
+document.querySelectorAll('[style*="right: -6px"]').forEach(function(el) {
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function(e) {
+      var file = e.target.files[0];
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          var img = document.createElement('img');
+          img.src = event.target.result;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+          el.innerHTML = '';
+          el.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  });
+});
+
+// 为第2页粉色资料卡的白色长方形和圆圈添加图片上传功能
+// 白色长方形（50x50）
+document.querySelectorAll('div[style*="width: 50px"][style*="height: 50px"][style*="background: #fff"][style*="border-radius: 8px"]').forEach(function(el) {
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function(e) {
+      var file = e.target.files[0];
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          var img = document.createElement('img');
+          img.src = event.target.result;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:8px;';
+          el.innerHTML = '';
+          el.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  });
+});
+
+// 为粉色资料卡内的所有可点击元素添加图片上传功能
+// 查找粉色资料卡
+var pinkCard = document.querySelector('div[style*="background: linear-gradient(to bottom, #fff0f5, #ffe6ef)"]');
+if (pinkCard) {
+  // 白色圆圈（50x50）
+  var whiteCircle = pinkCard.querySelector('div[style*="width: 50px"][style*="height: 50px"][style*="background: #fff"][style*="border-radius: 8px"]');
+  if (whiteCircle) {
+    whiteCircle.style.cursor = 'pointer';
+    whiteCircle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        var file = e.target.files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function(event) {
+            var img = document.createElement('img');
+            img.src = event.target.result;
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:8px;';
+            whiteCircle.innerHTML = '';
+            whiteCircle.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    });
+  }
+  
+  // 白色长正方形（50x70）
+  var whiteRect = pinkCard.querySelector('div[style*="width: 50px"][style*="height: 70px"][style*="background: #fff"][style*="border-radius: 10px"]');
+  if (whiteRect) {
+    whiteRect.style.cursor = 'pointer';
+    whiteRect.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        var file = e.target.files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function(event) {
+            var img = document.createElement('img');
+            img.src = event.target.result;
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:10px;';
+            whiteRect.innerHTML = '';
+            whiteRect.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    });
+  }
+}
+
+// ===== API配置管理 =====
+// 关闭面板
+function closeSettingPanel(){
+  document.getElementById('apiSettingPanel').style.display = 'none';
+}
+
+// 保存配置
+function saveApiConfig(){
+  let config = {
+    url:document.getElementById("apiUrl").value,
+    key:document.getElementById("apiKey").value,
+    model:document.getElementById("apiModel").value,
+    temp:document.getElementById("tempSlider").value
+  };
+  localStorage.setItem("apiConfig",JSON.stringify(config));
+  alert("已保存");
+}
+
+// 测试链接
+function testApiLink(){
+  let u = document.getElementById("apiUrl").value;
+  let k = document.getElementById("apiKey").value;
+  if(!u||!k) return alert("请先填API地址和密钥");
+  alert("开始测试："+u);
+}
+
+// 回填旧配置
+window.onload = function(){
+  let old = localStorage.getItem("apiConfig");
+  if(old){
+    let cfg = JSON.parse(old);
+    document.getElementById("apiUrl").value = cfg.url||"";
+    document.getElementById("apiKey").value = cfg.key||"";
+    document.getElementById("apiModel").value = cfg.model||"";
+    document.getElementById("tempSlider").value = cfg.temp||0.7;
+    document.getElementById("tempVal").innerText = cfg.temp||0.7;
+  }
+  
+  // 为setBtn绑定点击事件
+  let setBtn = document.getElementById('setBtn');
+  let panel = document.getElementById('apiSettingPanel');
+  if(setBtn && panel){
+    setBtn.addEventListener('click', function(){
+      panel.style.display = 'block';
+    });
+  }
+}
 </script>
 </body>
 </html>
