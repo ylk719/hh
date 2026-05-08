@@ -129,6 +129,7 @@ body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
 
 /* 指示器 */
@@ -182,15 +183,21 @@ body {
 .app-grid .app-icon span { font-size: 11px; color: #666; font-weight: 500; }
 
 .dock-bar { 
-  margin: auto 5px calc(20px + max(0px, env(safe-area-inset-bottom))); 
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   display: flex; 
   justify-content: space-around; 
   background: rgba(255,255,255,0.85); 
   backdrop-filter: blur(10px); 
-  border-radius: 22px; 
-  padding: 20px 10px; 
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-  padding-bottom: calc(20px + max(0px, env(safe-area-inset-bottom)));
+  border-radius: 0;
+  padding: 15px 10px; 
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+  padding-bottom: calc(15px + max(0px, env(safe-area-inset-bottom)));
+  z-index: 999;
+  box-sizing: border-box;
 }
 .dock-bar .dock-icon { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
 .dock-bar .dock-icon:active { transform: scale(0.95); }
