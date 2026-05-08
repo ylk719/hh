@@ -1,0 +1,8 @@
+{
+  "name": "我的主页",
+  "short_name": "主页",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
+}
