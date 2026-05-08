@@ -7,38 +7,90 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <!-- Android Chrome 全屏 PWA -->
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#f0f0f0">
-<meta name="background-color" content="#f0f0f0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="background-color" content="#ffffff">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="好好柯">
+<meta name="format-detection" content="telephone=no">
+<meta name="format-detection" content="email=no">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='50%' y='50%' font-size='80' fill='white' text-anchor='middle' dominant-baseline='middle' font-family='system-ui'>好</text></svg>">
 <title>好好柯的桌面</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #2a2a2a; }
+html, body { 
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+  background: #2a2a2a;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
 
 .desktop-bg {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex; justify-content: center; align-items: center; padding: 10px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 10px;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .iphone-frame {
-  width: 100%; max-width: 390px; height: 100%; max-height: 844px;
-  background: #1a1a1a; border-radius: 50px; padding: 12px;
+  width: 100%; 
+  max-width: 390px; 
+  height: 100%; 
+  max-height: 844px;
+  background: #1a1a1a; 
+  border-radius: 50px; 
+  padding: 12px;
   box-shadow: 0 0 0 2px #333, 0 25px 50px rgba(0,0,0,0.5);
-  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  position: relative; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden;
 }
 
 .dynamic-island {
-  position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
-  width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 100;
+  position: absolute; 
+  top: 25px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  width: 120px; 
+  height: 35px; 
+  background: #000; 
+  border-radius: 20px; 
+  z-index: 100;
   display: none;
 }
 
 .phone-screen {
-  width: 100%; height: 100%; background: #fff; border-radius: 40px;
-  overflow: hidden; position: relative; display: flex; flex-direction: column;
+  width: 100%; 
+  height: 100%; 
+  background: #fff; 
+  border-radius: 40px;
+  overflow: hidden; 
+  position: relative; 
+  display: flex; 
+  flex-direction: column;
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
 }
 
 /* 状态栏 */
@@ -297,8 +349,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #2a2a2a; }
         <!-- 第2页 -->
         <div class="scroll-page" id="page1">
           <div class="dot-bg"></div>
-          <div class="p2-wrap">
-            <div class="p2-content">
+          <div class="p2-wrap" style="display: flex; flex-direction: column;">
+            <div class="p2-content" style="flex: 1; overflow-y: auto; padding-top: 30px;">
             <!-- 粉色卡通消息区 -->
             <div style="background: linear-gradient(to bottom, #fff0f5, #ffe6ef); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(255, 182, 193, 0.3);">
               <!-- 顶部装饰 -->
@@ -359,6 +411,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #2a2a2a; }
         <div class="scroll-page" id="page2">
           <div class="dot-bg"></div>
           <div class="p3-wrap" style="display: flex; flex-direction: column;">
+            <div style="padding-top: 30px;"></div>
             <div class="calendar-card" style="margin-bottom: 12px; padding: 12px;">
               <div class="calendar-header" style="margin-bottom: 10px;"><div class="month" style="font-size: 20px;">5月</div><div class="year" style="font-size: 14px;">2026年</div></div>
               <div class="calendar-days-header" style="font-size: 12px; margin-bottom: 6px;"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
@@ -566,12 +619,86 @@ document.addEventListener('touchmove', function(e) {
   }
 }, false);
 
-// 隐藏地址栏
+// ===== 全屏处理 =====
+function handleFullscreen() {
+  // 隐藏地址栏
+  window.scrollTo(0, 1);
+  
+  // 尝试进入全屏模式（仅在支持的浏览器中）
+  var elem = document.documentElement;
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen().catch(function(err) {
+      console.log('Fullscreen request failed:', err);
+    });
+  } else if (elem.webkitRequestFullscreen) {
+    elem.webkitRequestFullscreen();
+  } else if (elem.mozRequestFullScreen) {
+    elem.mozRequestFullScreen();
+  } else if (elem.msRequestFullscreen) {
+    elem.msRequestFullscreen();
+  }
+}
+
+// 页面加载完成后处理全屏
 window.addEventListener('load', function() {
+  setTimeout(handleFullscreen, 100);
+});
+
+// 用户交互后再次尝试隐藏地址栏
+document.addEventListener('touchstart', function() {
   setTimeout(function() {
     window.scrollTo(0, 1);
-  }, 0);
+  }, 100);
+}, false);
+
+// 处理屏幕方向变化
+window.addEventListener('orientationchange', function() {
+  setTimeout(function() {
+    window.scrollTo(0, 1);
+  }, 500);
 });
+
+// 处理可见性变化
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    setTimeout(function() {
+      window.scrollTo(0, 1);
+    }, 100);
+  }
+});
+
+// 防止系统UI显示
+document.addEventListener('scroll', function() {
+  if (window.scrollY > 0) {
+    window.scrollTo(0, 0);
+  }
+}, false);
+
+// 处理安全区域
+function updateSafeArea() {
+  var safeAreaInsetBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom')) || 0;
+  var safeAreaInsetTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top')) || 0;
+  
+  // 动态调整页面底部padding
+  if (safeAreaInsetBottom > 0) {
+    document.body.style.paddingBottom = safeAreaInsetBottom + 'px';
+  }
+}
+
+updateSafeArea();
+window.addEventListener('resize', updateSafeArea);
+
+// 禁用长按菜单
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  return false;
+}, false);
+
+// 禁用选择
+document.addEventListener('selectstart', function(e) {
+  e.preventDefault();
+  return false;
+}, false);
 </script>
 </body>
 </html>
