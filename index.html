@@ -8,6 +8,12 @@ html_code = '''<!DOCTYPE html>
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#ffffff">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='50%' y='50%' font-size='80' fill='white' text-anchor='middle' dominant-baseline='middle' font-family='system-ui'>好</text></svg>">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="standalone" content="yes">
 <title>好好柯的桌面</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -359,6 +365,27 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #2a2a2a; }
   updateClock();
   setInterval(updateClock, 60000);
 })();
+
+// PWA Service Worker 注册
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(err) {
+    console.log('Service Worker registration failed:', err);
+  });
+}
+
+// 防止缩放和双击
+document.addEventListener('touchmove', function(e) {
+  if (e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, false);
+
+// 隐藏地址栏
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    window.scrollTo(0, 1);
+  }, 0);
+});
 </script>
 </body>
 </html>'''
