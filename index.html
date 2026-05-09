@@ -305,7 +305,7 @@ body {
     <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">API 地址</label>
     <div style="display:flex; gap:8px;">
       <input type="text" id="apiUrl" style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; user-select:text !important; -webkit-user-select:text !important; -webkit-touch-callout:default !important; pointer-events:auto !important;" placeholder="例如：https://api.openai.com/v1/chat/completions">
-      <button onclick="if(navigator.clipboard && navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){document.getElementById('apiUrl').value=t;}).catch(function(e){var p1=prompt('请在此处长按或右键粘贴API地址：');if(p1)document.getElementById('apiUrl').value=p1;});}else{var p1=prompt('请在此处长按或右键粘贴API地址：');if(p1)document.getElementById('apiUrl').value=p1;}" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
+      <button onclick="pasteFromClipboard('apiUrl')" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
     </div>
   </div>
 
@@ -313,7 +313,7 @@ body {
     <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">API 密钥</label>
     <div style="display:flex; gap:8px;">
       <input type="text" id="apiKey" style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; user-select:text !important; -webkit-user-select:text !important; -webkit-touch-callout:default !important; pointer-events:auto !important;" placeholder="输入你的API Key">
-      <button onclick="if(navigator.clipboard && navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){document.getElementById('apiKey').value=t;}).catch(function(e){var p2=prompt('请在此处长按或右键粘贴API密钥：');if(p2)document.getElementById('apiKey').value=p2;});}else{var p2=prompt('请在此处长按或右键粘贴API密钥：');if(p2)document.getElementById('apiKey').value=p2;}" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
+      <button onclick="pasteFromClipboard('apiKey')" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
     </div>
   </div>
 
@@ -338,6 +338,18 @@ body {
   </div>
 
   <div id="statusText" style="margin-top:20px; text-align:center; font-size:14px; color:#666;">未加载配置</div>
+</div>
+
+<!-- 模型选择弹窗 -->
+<div id="modelSelectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100000; align-items: center; justify-content: center;">
+  <div style="background: #fff; width: 80%; max-height: 70%; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; text-align: center; position: relative;">
+      选择模型
+      <span id="closeModelModal" style="position: absolute; right: 15px; top: 15px; color: #999; cursor: pointer; font-size: 18px; line-height: 1;">✕</span>
+    </div>
+    <div id="modelListContainer" style="flex: 1; overflow-y: auto; padding: 10px;">
+    </div>
+  </div>
 </div>
 
 <div class="desktop-bg">
@@ -932,6 +944,66 @@ if (pinkCard) {
   }
 }
 
+// 粘贴功能（兼容 file:// 协议）
+async function pasteFromClipboard(inputId) {
+    const input = document.getElementById(inputId);
+    
+    try {
+        // 尝试现代 API（https/localhost 下能用）
+        const text = await navigator.clipboard.readText();
+        input.value = text;
+        showToast('粘贴成功');
+    } catch (err) {
+        // 降级方案：file:// 下也能用
+        fallbackPaste(input);
+    }
+}
+
+// 兼容 file:// 的粘贴方案
+function fallbackPaste(inputElement) {
+    // 创建一个隐藏的输入框
+    const tempInput = document.createElement('textarea');
+    tempInput.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(tempInput);
+    tempInput.focus();
+    
+    // 提示用户
+    const oldValue = inputElement.placeholder;
+    inputElement.placeholder = '请按 Ctrl+V 粘贴，然后点击页面空白处';
+    inputElement.style.border = '2px solid #007AFF';
+    
+    // 监听粘贴
+    tempInput.addEventListener('paste', function(e) {
+        setTimeout(() => {
+            inputElement.value = tempInput.value;
+            inputElement.placeholder = oldValue;
+            inputElement.style.border = '';
+            document.body.removeChild(tempInput);
+            showToast('粘贴成功');
+        }, 50);
+    });
+    
+    // 3秒后自动清理
+    setTimeout(() => {
+        if (tempInput.parentNode) {
+            document.body.removeChild(tempInput);
+            inputElement.placeholder = oldValue;
+            inputElement.style.border = '';
+        }
+    }, 3000);
+}
+
+// 显示提示
+function showToast(msg) {
+    if (window.showToast) return window.showToast(msg);
+    
+    const div = document.createElement('div');
+    div.textContent = msg;
+    div.style.cssText = 'position:fixed;top:20%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;padding:10px 20px;border-radius:8px;z-index:999999;font-size:14px;';
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2000);
+}
+
 // ===== API配置管理 =====
 const shezhiBtn = document.getElementById('shezhiBtn');
 const apiPanel = document.getElementById('apiSettingPanel');
@@ -999,7 +1071,15 @@ document.getElementById('testLinkBtn').addEventListener('click', function() {
   }
   statusText.innerText = '⏳ 正在测试链接...';
   statusText.style.color = '#007aff';
-  fetch(apiUrl.value, {
+  
+  // 确保使用完整的 chat/completions 路径
+  var fullUrl = apiUrl.value;
+  if (!fullUrl.endsWith('/chat/completions')) {
+    var baseUrl = fullUrl.replace(/\/v1\/?$/, '').replace(/\/$/, '');
+    fullUrl = baseUrl + '/v1/chat/completions';
+  }
+  
+  fetch(fullUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -1049,18 +1129,11 @@ document.getElementById('fetchModelBtn').addEventListener('click', function() {
   .then(d => {
     if (d.data && d.data.length > 0) {
       var models = d.data.map(m => m.id);
-      statusText.innerText = '✅ 可用模型（' + models.length + '个）：\n' + models.join('\n');
+      statusText.innerText = '✅ 成功拉取 ' + models.length + ' 个模型';
       statusText.style.color = '#34c759';
-      statusText.style.whiteSpace = 'pre-wrap';
-      statusText.style.textAlign = 'left';
-      statusText.style.fontSize = '12px';
-      statusText.style.maxHeight = '200px';
-      statusText.style.overflowY = 'auto';
       
-      // 如果模型名称为空，自动填入第一个模型
-      if (!modelName.value && models.length > 0) {
-        modelName.value = models[0];
-      }
+      // 显示模型选择弹窗
+      showModelSelectModal(models);
     } else if (d.error) {
       statusText.innerText = '❌ ' + d.error.message;
       statusText.style.color = 'red';
@@ -1073,6 +1146,38 @@ document.getElementById('fetchModelBtn').addEventListener('click', function() {
     statusText.innerText = '❌ 拉取失败：' + e.message;
     statusText.style.color = 'red';
   });
+});
+
+function showModelSelectModal(models) {
+  var modal = document.getElementById('modelSelectModal');
+  var container = document.getElementById('modelListContainer');
+  container.innerHTML = '';
+  
+  models.forEach(function(model) {
+    var item = document.createElement('div');
+    item.style.cssText = 'padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px; cursor: pointer; word-break: break-all;';
+    item.textContent = model;
+    item.addEventListener('click', function() {
+      document.getElementById('modelName').value = model;
+      modal.style.display = 'none';
+      showToast('已选择模型: ' + model);
+    });
+    container.appendChild(item);
+  });
+  
+  modal.style.display = 'flex';
+}
+
+document.getElementById('closeModelModal').addEventListener('click', function() {
+  document.getElementById('modelSelectModal').style.display = 'none';
+});
+
+// 强制解锁所有输入框的粘贴功能
+document.querySelectorAll('input, textarea').forEach(function(el) {
+    el.addEventListener('paste', function(e) {
+        // 不阻止，让粘贴正常进行
+        e.stopPropagation();
+    }, true);
 });
 </script>
 </body>
