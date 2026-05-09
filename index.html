@@ -14,6 +14,8 @@
 <title>好好柯的桌面</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+.iphone-frame { -webkit-user-select: none; user-select: none; }
+input, textarea, [contenteditable="true"], #apiSettingPanel { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 html { 
   width: 100vw; 
   height: 100vh; 
@@ -200,9 +202,10 @@ body {
   padding: 18px 30px; 
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
   padding-bottom: calc(18px + max(0px, env(safe-area-inset-bottom)));
-  z-index: 999;
+  z-index: 9998;
   box-sizing: border-box;
   gap: 15px;
+  pointer-events: auto;
 }
 .dock-bar .dock-icon { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
 .dock-bar .dock-icon:active { transform: scale(0.95); }
@@ -273,6 +276,15 @@ body {
     padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
 
+/* API设置面板输入框 - 确保完全可交互 */
+#apiSettingPanel input[type="text"],
+#apiSettingPanel input[type="range"] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  pointer-events: auto !important;
+}
+
 @media (max-width: 430px) and (max-height: 932px) {
   .desktop-bg { padding: 0; background: #fff; }
   .iphone-frame { max-width: none; max-height: none; width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
@@ -283,51 +295,49 @@ body {
 </style>
 </head>
 <body>
-<!-- API设置面板 默认隐藏 -->
-<div id="apiSettingPanel" style="
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:#f5f6fa;
-    z-index:9999;
-    padding:20px;
-    padding-bottom:calc(20px + env(safe-area-inset-bottom));
-">
+<!-- API设置弹窗页面 -->
+<div id="apiSettingPanel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f5f6fa; z-index: 99999; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; -webkit-user-select: text; user-select: text;">
+  <div id="backToDesktop" style="position:absolute; top:15px; left:20px; font-size:16px; color:#007aff; cursor:pointer; z-index:10000;">← 返回桌面</div>
+  
+  <div style="font-size:20px; text-align:center; margin:40px 0 30px; font-weight:bold;">API模型配置</div>
 
-    <h3 style="text-align:center;margin-bottom:20px;">API 设置</h3>
+  <div style="margin-bottom:20px;">
+    <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">API 地址</label>
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="apiUrl" style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; user-select:text !important; -webkit-user-select:text !important; -webkit-touch-callout:default !important; pointer-events:auto !important;" placeholder="例如：https://api.openai.com/v1/chat/completions">
+      <button onclick="if(navigator.clipboard && navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){document.getElementById('apiUrl').value=t;}).catch(function(e){var p1=prompt('请在此处长按或右键粘贴API地址：');if(p1)document.getElementById('apiUrl').value=p1;});}else{var p1=prompt('请在此处长按或右键粘贴API地址：');if(p1)document.getElementById('apiUrl').value=p1;}" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
+    </div>
+  </div>
 
-    <div style="margin-bottom:15px;">
-        <input type="text" id="apiUrl" placeholder="API地址" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
+  <div style="margin-bottom:20px;">
+    <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">API 密钥</label>
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="apiKey" style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; user-select:text !important; -webkit-user-select:text !important; -webkit-touch-callout:default !important; pointer-events:auto !important;" placeholder="输入你的API Key">
+      <button onclick="if(navigator.clipboard && navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){document.getElementById('apiKey').value=t;}).catch(function(e){var p2=prompt('请在此处长按或右键粘贴API密钥：');if(p2)document.getElementById('apiKey').value=p2;});}else{var p2=prompt('请在此处长按或右键粘贴API密钥：');if(p2)document.getElementById('apiKey').value=p2;}" style="padding:0 15px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; white-space:nowrap; font-size:14px;">一键粘贴</button>
     </div>
-    <div style="margin-bottom:15px;">
-        <input type="text" id="apiKey" placeholder="API密钥" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
-    </div>
-    <div style="margin-bottom:15px;">
-        <input type="text" id="apiModel" placeholder="模型名称" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;">
-    </div>
+  </div>
 
-    <div style="margin:20px 0;">
-        <div style="display:flex;justify-content:space-between;">
-            <span>温度</span>
-            <span id="tempVal">0.7</span>
-        </div>
-        <input type="range" id="tempSlider" min="0" max="2" step="0.1" value="0.7"
-        style="width:100%;margin-top:8px;"
-        oninput="document.getElementById('tempVal').innerText=this.value">
-    </div>
+  <div style="margin-bottom:20px;">
+    <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">模型名称</label>
+    <input type="text" id="modelName" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;" placeholder="例如：gpt-3.5-turbo">
+  </div>
 
-    <div style="display:flex;gap:10px;">
-        <button style="flex:1;padding:12px;border-radius:12px;border:none;background:#eee;" onclick="testApiLink()">链接测试</button>
-        <button style="flex:1;padding:12px;border-radius:12px;border:none;background:#eee;" onclick="saveApiConfig()">保存设置</button>
-    </div>
+  <div style="margin-bottom:20px;">
+    <label style="display:block; font-size:14px; margin-bottom:8px; color:#333;">温度参数：<span id="tempValue">0.7</span></label>
+    <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" style="width:100%;">
+    <div style="font-size:12px; color:#999; margin-top:4px;">数值越高回答越随机，越低越严谨</div>
+  </div>
 
-    <button style="width:100%;margin-top:15px;padding:12px;border-radius:12px;border:none;background:#ddd;"
-    onclick="document.getElementById('apiSettingPanel').style.display='none'">
-        关闭
-    </button>
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <button id="fetchModelBtn" style="flex:1; padding:12px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer;">拉取模型</button>
+    <button id="testLinkBtn" style="flex:1; padding:12px; border:none; border-radius:8px; background:#34c759; color:#fff; cursor:pointer;">链接测试</button>
+  </div>
+
+  <div style="margin-top:15px;">
+    <button id="saveConfigBtn" style="width:100%; padding:12px; border:none; border-radius:8px; background:#e5e5e5; color:#333; cursor:pointer;">保存配置</button>
+  </div>
+
+  <div id="statusText" style="margin-top:20px; text-align:center; font-size:14px; color:#666;">未加载配置</div>
 </div>
 
 <div class="desktop-bg">
@@ -430,15 +440,7 @@ body {
                <div class="dock-icon"><div class="icon">🎨</div><span>外观</span></div>
                <div class="dock-icon"><div class="icon">👫</div><span>情侣空间</span></div>
                <div class="dock-icon"><div class="icon">💬</div><span>论坛</span></div>
-               <div id="setBtn" style="
-    position: relative;
-    z-index: 99999;
-    text-align: center;
-    cursor: pointer;
-">
-    <div style="font-size:26px;">⚙️</div>
-    <div style="font-size:12px;color:#666;margin-top:4px;">设置</div>
-</div>
+               <div class="dock-icon" id="shezhiBtn" onclick="document.getElementById('apiSettingPanel').style.display='block';loadApiConfig();"><div class="icon">⚙️</div><span>设置</span></div>
             </div>
           </div>
         </div>
@@ -499,7 +501,7 @@ body {
                <div class="dock-icon"><div class="icon">🎨</div><span>外观</span></div>
                <div class="dock-icon"><div class="icon">👫</div><span>情侣空间</span></div>
                <div class="dock-icon"><div class="icon">💬</div><span>论坛</span></div>
-               <div class="dock-icon"><div class="icon">⚙️</div><span>设置</span></div>
+               <div class="dock-icon" onclick="document.getElementById('apiSettingPanel').style.display='block';loadApiConfig();"><div class="icon">⚙️</div><span>设置</span></div>
             </div>
           </div>
         </div>
@@ -528,7 +530,7 @@ body {
                <div class="dock-icon"><div class="icon">🎨</div><span>外观</span></div>
                <div class="dock-icon"><div class="icon">👫</div><span>情侣空间</span></div>
                <div class="dock-icon"><div class="icon">💬</div><span>论坛</span></div>
-               <div class="dock-icon"><div class="icon">⚙️</div><span>设置</span></div>
+               <div class="dock-icon" onclick="document.getElementById('apiSettingPanel').style.display='block';loadApiConfig();"><div class="icon">⚙️</div><span>设置</span></div>
             </div>
           </div>
         </div>
@@ -566,8 +568,9 @@ body {
     });
   });
 
-  // 点击反馈
+  // 点击反馈（排除设置按钮）
   document.querySelectorAll('.app-icon, .dock-icon, .app-item').forEach(function(el) {
+    if (el.id === 'shezhiBtn') return; // 不干扰设置按钮
     el.addEventListener('click', function() {
       this.style.transform = 'scale(0.92)';
       setTimeout(function() { el.style.transform = ''; }, 120);
@@ -709,13 +712,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// 防止缩放和双击
-document.addEventListener('touchmove', function(e) {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-}, false);
-
 // ===== 全屏处理 =====
 function handleFullscreen() {
   // 隐藏地址栏
@@ -741,35 +737,6 @@ window.addEventListener('load', function() {
   setTimeout(handleFullscreen, 100);
 });
 
-// 用户交互后再次尝试隐藏地址栏
-document.addEventListener('touchstart', function() {
-  setTimeout(function() {
-    window.scrollTo(0, 1);
-  }, 100);
-}, false);
-
-// 处理屏幕方向变化
-window.addEventListener('orientationchange', function() {
-  setTimeout(function() {
-    window.scrollTo(0, 1);
-  }, 500);
-});
-
-// 处理可见性变化
-document.addEventListener('visibilitychange', function() {
-  if (!document.hidden) {
-    setTimeout(function() {
-      window.scrollTo(0, 1);
-    }, 100);
-  }
-});
-
-// 防止系统UI显示
-document.addEventListener('scroll', function() {
-  if (window.scrollY > 0) {
-    window.scrollTo(0, 0);
-  }
-}, false);
 
 // 处理安全区域
 function updateSafeArea() {
@@ -784,22 +751,6 @@ function updateSafeArea() {
 
 updateSafeArea();
 window.addEventListener('resize', updateSafeArea);
-
-// 禁用长按菜单（但允许编辑区域）
-document.addEventListener('contextmenu', function(e) {
-  if (!e.target.contentEditable || e.target.contentEditable === 'false') {
-    e.preventDefault();
-    return false;
-  }
-}, false);
-
-// 禁用选择（但允许编辑区域）
-document.addEventListener('selectstart', function(e) {
-  if (!e.target.contentEditable || e.target.contentEditable === 'false') {
-    e.preventDefault();
-    return false;
-  }
-}, false);
 
 // ===== 编辑功能 =====
 // 为蓝色资料卡的文字添加编辑功能
@@ -982,52 +933,147 @@ if (pinkCard) {
 }
 
 // ===== API配置管理 =====
-// 关闭面板
-function closeSettingPanel(){
-  document.getElementById('apiSettingPanel').style.display = 'none';
-}
+const shezhiBtn = document.getElementById('shezhiBtn');
+const apiPanel = document.getElementById('apiSettingPanel');
+const backBtn = document.getElementById('backToDesktop');
+const apiUrl = document.getElementById('apiUrl');
+const apiKey = document.getElementById('apiKey');
+const modelName = document.getElementById('modelName');
+const tempSlider = document.getElementById('tempSlider');
+const tempValue = document.getElementById('tempValue');
+const statusText = document.getElementById('statusText');
+
+// 打开设置页
+shezhiBtn.addEventListener('click', function() {
+  apiPanel.style.display = 'block';
+  loadApiConfig();
+});
+
+// 返回桌面
+backBtn.addEventListener('click', function() {
+  apiPanel.style.display = 'none';
+});
+
+// 温度滑块
+tempSlider.addEventListener('input', function() {
+  tempValue.innerText = this.value;
+});
 
 // 保存配置
-function saveApiConfig(){
-  let config = {
-    url:document.getElementById("apiUrl").value,
-    key:document.getElementById("apiKey").value,
-    model:document.getElementById("apiModel").value,
-    temp:document.getElementById("tempSlider").value
+document.getElementById('saveConfigBtn').addEventListener('click', function() {
+  const config = {
+    url: apiUrl.value,
+    key: apiKey.value,
+    model: modelName.value,
+    temp: tempSlider.value
   };
-  localStorage.setItem("apiConfig",JSON.stringify(config));
-  alert("已保存");
-}
+  localStorage.setItem('apiConfig', JSON.stringify(config));
+  statusText.innerText = '✅ 配置已保存';
+  statusText.style.color = '#34c759';
+});
 
-// 测试链接
-function testApiLink(){
-  let u = document.getElementById("apiUrl").value;
-  let k = document.getElementById("apiKey").value;
-  if(!u||!k) return alert("请先填API地址和密钥");
-  alert("开始测试："+u);
-}
-
-// 回填旧配置
-window.onload = function(){
-  let old = localStorage.getItem("apiConfig");
-  if(old){
-    let cfg = JSON.parse(old);
-    document.getElementById("apiUrl").value = cfg.url||"";
-    document.getElementById("apiKey").value = cfg.key||"";
-    document.getElementById("apiModel").value = cfg.model||"";
-    document.getElementById("tempSlider").value = cfg.temp||0.7;
-    document.getElementById("tempVal").innerText = cfg.temp||0.7;
+// 加载配置
+function loadApiConfig() {
+  const savedConfig = localStorage.getItem('apiConfig');
+  if (savedConfig) {
+    const config = JSON.parse(savedConfig);
+    apiUrl.value = config.url || '';
+    apiKey.value = config.key || '';
+    modelName.value = config.model || '';
+    tempSlider.value = config.temp || 0.7;
+    tempValue.innerText = config.temp || 0.7;
+    statusText.innerText = '✅ 已加载本地配置';
+    statusText.style.color = '#007aff';
+  } else {
+    statusText.innerText = '无本地配置，请填写后保存';
+    statusText.style.color = '#999';
   }
+}
+
+// 链接测试 - 真实请求
+document.getElementById('testLinkBtn').addEventListener('click', function() {
+  if (!apiUrl.value || !apiKey.value) {
+    statusText.innerText = '❌ 请先填写API地址和密钥';
+    statusText.style.color = 'red';
+    return;
+  }
+  statusText.innerText = '⏳ 正在测试链接...';
+  statusText.style.color = '#007aff';
+  fetch(apiUrl.value, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey.value
+    },
+    body: JSON.stringify({
+      model: modelName.value || 'gpt-3.5-turbo',
+      messages: [{role: 'user', content: 'hi'}],
+      max_tokens: 5
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      statusText.innerText = '❌ ' + d.error.message;
+      statusText.style.color = 'red';
+    } else {
+      statusText.innerText = '✅ 链接测试成功！';
+      statusText.style.color = '#34c759';
+    }
+  })
+  .catch(e => {
+    statusText.innerText = '❌ 连接失败：' + e.message;
+    statusText.style.color = 'red';
+  });
+});
+
+// 拉取模型 - 真实请求
+document.getElementById('fetchModelBtn').addEventListener('click', function() {
+  if (!apiUrl.value || !apiKey.value) {
+    statusText.innerText = '❌ 请先填写API地址和密钥';
+    statusText.style.color = 'red';
+    return;
+  }
+  statusText.innerText = '⏳ 正在拉取模型列表...';
+  statusText.style.color = '#007aff';
   
-  // 为setBtn绑定点击事件
-  let setBtn = document.getElementById('setBtn');
-  let panel = document.getElementById('apiSettingPanel');
-  if(setBtn && panel){
-    setBtn.addEventListener('click', function(){
-      panel.style.display = 'block';
-    });
-  }
-}
+  // 从API地址提取base URL
+  var baseUrl = apiUrl.value.replace(/\/chat\/completions\/?$/, '').replace(/\/v1\/?$/, '');
+  
+  fetch(baseUrl + '/v1/models', {
+    headers: {
+      'Authorization': 'Bearer ' + apiKey.value
+    }
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.data && d.data.length > 0) {
+      var models = d.data.map(m => m.id);
+      statusText.innerText = '✅ 可用模型（' + models.length + '个）：\n' + models.join('\n');
+      statusText.style.color = '#34c759';
+      statusText.style.whiteSpace = 'pre-wrap';
+      statusText.style.textAlign = 'left';
+      statusText.style.fontSize = '12px';
+      statusText.style.maxHeight = '200px';
+      statusText.style.overflowY = 'auto';
+      
+      // 如果模型名称为空，自动填入第一个模型
+      if (!modelName.value && models.length > 0) {
+        modelName.value = models[0];
+      }
+    } else if (d.error) {
+      statusText.innerText = '❌ ' + d.error.message;
+      statusText.style.color = 'red';
+    } else {
+      statusText.innerText = '❌ 未获取到模型列表';
+      statusText.style.color = 'red';
+    }
+  })
+  .catch(e => {
+    statusText.innerText = '❌ 拉取失败：' + e.message;
+    statusText.style.color = 'red';
+  });
+});
 </script>
 </body>
 </html>
